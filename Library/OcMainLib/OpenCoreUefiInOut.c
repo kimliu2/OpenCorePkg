@@ -244,7 +244,25 @@ OcLoadUefiOutputSupport (
   }
 
   if (Config->Uefi.Output.UgaPassThrough) {
-    OcProvideUgaPassThrough ();
+    Status = OcProvideUgaPassThrough ();
+    if (EFI_ERROR (Status)) {
+      DEBUG ((
+        DEBUG_INFO,
+        "OC: OcProvideUgaPassThrough status - %r\n",
+        Status
+        ));
+    }
+  }
+
+  if (Config->Uefi.Output.GopPassThrough) {
+    Status = OcProvideGopPassThrough ();
+    if (EFI_ERROR (Status)) {
+      DEBUG ((
+        DEBUG_INFO,
+        "OC: OcProvideGopPassThrough status - %r\n",
+        Status
+        ));
+    }
   }
 
   AsciiRenderer = OC_BLOB_GET (&Config->Uefi.Output.TextRenderer);

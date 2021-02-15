@@ -5,6 +5,7 @@ OpenCore Changelog
 - Added `OEM` values to `PlatformInfo` in `Automatic` mode
 - Improved CPU frequency calculation on Haswell and earlier
 - Fixed issues when applying certain patches
+- Added `GopPassThrough` option to support GOP protocol over UGA
 
 #### v0.6.6
 - Added keyboard and pointer entry scroll support in OpenCanopy
