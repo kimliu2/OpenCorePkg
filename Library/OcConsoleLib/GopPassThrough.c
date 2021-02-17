@@ -266,7 +266,6 @@ OcProvideGopPassThrough (
         if (EFI_ERROR (Status)) {
           FreePool (OcGopDraw->GraphicsOutput.Mode->Info);
           FreePool (OcGopDraw->GraphicsOutput.Mode);
-          FreePool (OcGopDraw->GraphicsOutput);
           FreePool (OcGopDraw);
         }
 
