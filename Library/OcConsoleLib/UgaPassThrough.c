@@ -236,6 +236,9 @@ OcProvideUgaPassThrough (
           &OcUgaDraw->Uga,
           NULL
           );
+        if (EFI_ERROR (Status)) {
+          FreePool (OcUgaDraw);
+        }
 
         DEBUG ((DEBUG_INFO, "OCC: Installed UGA protocol - %r\n", Status));
       } else {
