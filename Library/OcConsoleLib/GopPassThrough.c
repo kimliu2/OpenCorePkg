@@ -150,7 +150,9 @@ OcProvideGopPassThrough (
     &HandleBuffer
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "OCC: Failed to find handles with UGA\n"));
+  } else {
     DEBUG ((DEBUG_INFO, "OCC: Found %u handles with UGA for GOP check\n", (UINT32) HandleCount));
 
     for (Index = 0; Index < HandleCount; ++Index) {
@@ -171,7 +173,10 @@ OcProvideGopPassThrough (
         &gEfiGraphicsOutputProtocolGuid,
         (VOID **) &GraphicsOutput
         );
-      if (EFI_ERROR (Status)) {
+      if (!EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_INFO, "Skipping GOP proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
+        continue;
+      } else {
         FramebufferBase = 0;
         FramebufferSize = 0;
         ScreenRowBytes  = 0;
@@ -277,15 +282,10 @@ OcProvideGopPassThrough (
           VerticalResolution,
           FramebufferBase
           ));
-      } else {
-        DEBUG ((DEBUG_INFO, "Skipping GOP proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
-        continue;
       }
     }
 
     FreePool (HandleBuffer);
-  } else {
-    DEBUG ((DEBUG_INFO, "OCC: Failed to find handles with UGA\n"));
   }
 
   return Status;

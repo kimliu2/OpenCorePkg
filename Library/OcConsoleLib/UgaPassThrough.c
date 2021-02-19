@@ -193,7 +193,9 @@ OcProvideUgaPassThrough (
     &HandleBuffer
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "OCC: Failed to find handles with GOP\n"));
+  } else {
     DEBUG ((DEBUG_INFO, "OCC: Found %u handles with GOP for UGA check\n", (UINT32) HandleCount));
 
     for (Index = 0; Index < HandleCount; ++Index) {
@@ -216,7 +218,10 @@ OcProvideUgaPassThrough (
         (VOID **) &UgaDraw
         );
 
-      if (EFI_ERROR (Status)) {
+      if (!EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_INFO, "Skipping UGA proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
+        continue;
+      } else {
         OcUgaDraw = AllocateZeroPool (sizeof (*OcUgaDraw));
         if (OcUgaDraw == NULL) {
           DEBUG ((DEBUG_INFO, "OCC: Failed to allocate UGA protocol\n"));
@@ -245,15 +250,10 @@ OcProvideUgaPassThrough (
           (UINT32) Index,
           HandleBuffer[Index]
           ));
-      } else {
-        DEBUG ((DEBUG_INFO, "Skipping UGA proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
-        continue;
       }
     }
 
     FreePool (HandleBuffer);
-  } else {
-    DEBUG ((DEBUG_INFO, "OCC: Failed to find handles with GOP\n"));
   }
 
   return Status;
