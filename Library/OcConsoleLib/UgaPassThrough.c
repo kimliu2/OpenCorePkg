@@ -210,7 +210,7 @@ OcProvideUgaPassThrough (
       (VOID **) &UgaDraw
       );
     if (!EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "Skipping UGA proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
+      DEBUG ((DEBUG_INFO, "OCC: Skipping UGA proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
       continue;
     }
 

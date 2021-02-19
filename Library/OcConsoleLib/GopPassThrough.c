@@ -130,8 +130,45 @@ OcProvideGopPassThrough (
   UINT32                           RefreshRate;
 
   DEBUG_CODE_BEGIN ();
-  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with GOP draw\n", (UINT32) OcCountProtocolInstances (&gEfiGraphicsOutputProtocolGuid)));
-  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with Apple Framebuffer info\n", (UINT32) OcCountProtocolInstances (&gAppleFramebufferInfoProtocolGuid)));
+  HandleCount = (UINT32) OcCountProtocolInstances (&gEfiGraphicsOutputProtocolGuid);
+  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with GOP draw\n", HandleCount));
+
+  HandleCount = (UINT32) OcCountProtocolInstances (&gAppleFramebufferInfoProtocolGuid);
+  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with Apple Framebuffer info\n", HandleCount));
+  if (HandleCount > 0) {
+    Status = gBS->LocateProtocol (
+      &gAppleFramebufferInfoProtocolGuid,
+      NULL,
+      (VOID *) &FramebufferInfo
+      );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_INFO, "OCC: Failed to locate AppleFramebufferInfo protocol - %r\n", Status));
+    } else {
+      Status = FramebufferInfo->GetInfo (
+        FramebufferInfo,
+        &FramebufferBase,
+        &FramebufferSize,
+        &ScreenRowBytes,
+        &ScreenWidth,
+        &ScreenHeight,
+        &ScreenDepth
+        );
+      if (!EFI_ERROR (Status)) {
+        DEBUG ((
+          DEBUG_INFO,
+          "OCC: AppleFramebufferInfo - Got Base %Lx, Size %u, RowBytes %u, Width %u, Height %u, Depth %u\n",
+          FramebufferBase,
+          FramebufferSize,
+          ScreenRowBytes,
+          ScreenWidth,
+          ScreenHeight,
+          ScreenDepth
+          ));
+      } else {
+        DEBUG ((DEBUG_INFO, "OCC: AppleFramebufferInfo failed to retrieve info - %r\n", Status));
+      }
+    }
+  }
   DEBUG_CODE_END ();
   
   Status = gBS->LocateHandleBuffer (
@@ -168,7 +205,7 @@ OcProvideGopPassThrough (
       (VOID **) &GraphicsOutput
       );
     if (!EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "Skipping GOP proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
+      DEBUG ((DEBUG_INFO, "OCC: Skipping GOP proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
       continue;
     }
     
@@ -182,7 +219,22 @@ OcProvideGopPassThrough (
       &gAppleFramebufferInfoProtocolGuid,
       (VOID **) &FramebufferInfo
       );
-    if (!EFI_ERROR (Status)) {
+    if (EFI_ERROR (Status)) {
+      DEBUG ((
+        DEBUG_INFO,
+        "OCC: Failed to retrieve AppleFramebufferInfo protocol on handle %u - %p (%r)\n",
+        (UINT32) Index,
+        HandleBuffer[Index],
+        Status
+        ));
+    } else {
+      DEBUG ((
+        DEBUG_INFO,
+        "OCC: Got AppleFramebufferInfo protocol on handle %u - %p\n",
+        (UINT32) Index,
+        HandleBuffer[Index]
+        ));
+
       Status = FramebufferInfo->GetInfo (
         FramebufferInfo,
         &FramebufferBase,
@@ -194,6 +246,27 @@ OcProvideGopPassThrough (
         );
       if (!EFI_ERROR (Status)) {
         PixelFormat = PixelRedGreenBlueReserved8BitPerColor;  ///< or PixelBlueGreenRedReserved8BitPerColor?
+
+        DEBUG ((
+          DEBUG_INFO,
+          "OCC: AppleFramebufferInfo - Got Base %Lx, Size %u, RowBytes %u, Width %u, Height %u, Depth %u on handle %u - %p\n",
+          FramebufferBase,
+          FramebufferSize,
+          ScreenRowBytes,
+          ScreenWidth,
+          ScreenHeight,
+          ScreenDepth,
+          (UINT32) Index,
+          HandleBuffer[Index]
+          ));
+      } else {
+        DEBUG ((
+          DEBUG_INFO,
+          "OCC: Failed to get info from AppleFramebufferInfo protocol on handle %u - %p (%r)\n",
+          (UINT32) Index,
+          HandleBuffer[Index],
+          Status
+          ));
       }
     }
 
