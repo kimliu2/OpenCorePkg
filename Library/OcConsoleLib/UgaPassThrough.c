@@ -170,19 +170,9 @@ OcProvideUgaPassThrough (
   // and 1 UGA protocol:
   // - for unknown handle
   //
-  Status = gBS->LocateHandleBuffer (
-    ByProtocol,
-    &gEfiUgaDrawProtocolGuid,
-    NULL,
-    &HandleCount,
-    &HandleBuffer
-    );
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "OCC: Found %u handles with UGA draw\n", (UINT32) HandleCount));
-    FreePool (HandleBuffer);
-  } else {
-    DEBUG ((DEBUG_INFO, "OCC: Found NO handles with UGA draw - %r, trying GOP\n", Status));
-  }
+  DEBUG_CODE_BEGIN ();
+  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with UGA draw\n", (UINT32) OcCountProtocolInstances (&gEfiUgaDrawProtocolGuid)));
+  DEBUG_CODE_END ();
 
   Status = gBS->LocateHandleBuffer (
     ByProtocol,
