@@ -172,8 +172,6 @@ OcProvideGopPassThrough (
         (VOID **) &GraphicsOutput
         );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_INFO, "OCC: No GOP protocol - %r\n", Status));
-
         FramebufferBase = 0;
         FramebufferSize = 0;
         ScreenRowBytes  = 0;
@@ -269,9 +267,18 @@ OcProvideGopPassThrough (
           FreePool (OcGopDraw);
         }
 
-        DEBUG ((DEBUG_INFO, "OCC: Installed GOP protocol - %r\n", Status));
+        DEBUG ((
+          DEBUG_INFO,
+          "OCC: Installed GOP protocol - %r (Handle %u - %p, Resolution %ux%u, FramebufferBase %Lx)\n",
+          Status,
+          (UINT32) Index,
+          HandleBuffer[Index],
+          HorizontalResolution,
+          VerticalResolution,
+          (UINT64) FramebufferBase
+          ));
       } else {
-        DEBUG ((DEBUG_INFO, "OCC: Has GOP protocol, skip\n"));
+        DEBUG ((DEBUG_INFO, "Skipping GOP proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
         continue;
       }
     }

@@ -217,8 +217,6 @@ OcProvideUgaPassThrough (
         );
 
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_INFO, "OCC: No UGA protocol - %r\n", Status));
-
         OcUgaDraw = AllocateZeroPool (sizeof (*OcUgaDraw));
         if (OcUgaDraw == NULL) {
           DEBUG ((DEBUG_INFO, "OCC: Failed to allocate UGA protocol\n"));
@@ -240,9 +238,15 @@ OcProvideUgaPassThrough (
           FreePool (OcUgaDraw);
         }
 
-        DEBUG ((DEBUG_INFO, "OCC: Installed UGA protocol - %r\n", Status));
+        DEBUG ((
+          DEBUG_INFO,
+          "OCC: Installed UGA protocol - %r (Handle %u - %p)\n",
+          Status,
+          (UINT32) Index,
+          HandleBuffer[Index]
+          ));
       } else {
-        DEBUG ((DEBUG_INFO, "OCC: Has UGA protocol, skip\n"));
+        DEBUG ((DEBUG_INFO, "Skipping UGA proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
         continue;
       }
     }
