@@ -193,7 +193,7 @@ OcProvideGopPassThrough (
             &ScreenDepth
             );
           if (!EFI_ERROR (Status)) {
-            PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
+            PixelFormat = PixelRedGreenBlueReserved8BitPerColor;  ///< or PixelBlueGreenRedReserved8BitPerColor?
           }
         }
 
@@ -275,7 +275,7 @@ OcProvideGopPassThrough (
           HandleBuffer[Index],
           HorizontalResolution,
           VerticalResolution,
-          (UINT64) FramebufferBase
+          FramebufferBase
           ));
       } else {
         DEBUG ((DEBUG_INFO, "Skipping GOP proxying as it is already present on handle %u - %p\n", (UINT32) Index, HandleBuffer[Index]));
