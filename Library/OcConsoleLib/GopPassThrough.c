@@ -276,13 +276,14 @@ OcProvideGopPassThrough (
 
     DEBUG ((
       DEBUG_INFO,
-      "OCC: Installed GOP protocol - %r (Handle %u - %p, Resolution %ux%u, FramebufferBase %Lx)\n",
+      "OCC: Installed GOP protocol - %r (Handle %u - %p, Resolution %ux%u, FramebufferBase %Lx, PixelFormat %d)\n",
       Status,
       (UINT32) Index,
       HandleBuffer[Index],
       HorizontalResolution,
       VerticalResolution,
-      FramebufferBase
+      FramebufferBase,
+      PixelFormat
       ));
   }
 
