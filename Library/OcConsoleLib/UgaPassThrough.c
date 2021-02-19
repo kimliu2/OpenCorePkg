@@ -18,6 +18,8 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
+#include <Library/OcMiscLib.h>
+
 STATIC
 EFI_STATUS
 EFIAPI
