@@ -127,20 +127,11 @@ OcProvideGopPassThrough (
   UINT32                           ColorDepth;
   UINT32                           RefreshRate;
 
-  Status = gBS->LocateHandleBuffer (
-    ByProtocol,
-    &gEfiGraphicsOutputProtocolGuid,
-    NULL,
-    &HandleCount,
-    &HandleBuffer
-    );
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "OCC: Found %u handles with GOP draw\n", (UINT32) HandleCount));
-    FreePool (HandleBuffer);
-  } else {
-    DEBUG ((DEBUG_INFO, "OCC: Found NO handles with GOP draw - %r, trying UGA\n", Status));
-  }
-
+  DEBUG_CODE_BEGIN ();
+  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with GOP draw\n", (UINT32) OcCountProtocolInstances (&gEfiGraphicsOutputProtocolGuid)));
+  DEBUG ((DEBUG_INFO, "OCC: Found %u handles with Apple Framebuffer info\n", (UINT32) OcCountProtocolInstances (&gAppleFramebufferInfoProtocolGuid)));
+  DEBUG_CODE_END ();
+  
   Status = gBS->LocateHandleBuffer (
     ByProtocol,
     &gEfiUgaDrawProtocolGuid,
